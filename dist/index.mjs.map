@@ -1,0 +1,1 @@
+{"version":3,"file":"index.mjs","sources":["../src/index.mjs"],"sourcesContent":["\n\nexport class Manager {\n  constructor() {\n    this\n  }\n\n  registerDataset() {\n  }\n}\n\n"],"names":["Manager"],"mappings":"AAEO,MAAMA,OAAN,CAAc;gBACL;;;;oBAII;;;;;"}
