@@ -11,26 +11,24 @@ describe('Dataset', function() {
     this.manager = new Manager()
   })
 
-  it.skip('無名(default)データセットを登録できる', async function() {
+  it('無名(default)データセットを登録できる', async function() {
     const data = []
     this.manager.registerDataset(data)
 
     const cf = this.manager.dataset() // default
-
-    assert(cf instanceof crossfilter)
+    assert(cf.dimension instanceof Function)
   })
 
-  it.skip('名前をつけてデータセットを登録できる', async function() {
+  it('名前をつけてデータセットを登録できる', async function() {
     const name = '2nd'
     const data = []
     this.manager.registerDataset(data, {dataset: name})
 
-    const crossfilter = this.manager.dataset(name)
-
-    assert(crossfilter instanceof crossfilter)
+    const cf = this.manager.dataset(name)
+    assert(cf.dimension instanceof Function)
   })
 
-  it.skip('filterAllが実行できる', async function() {
+  it('filterAllが実行できる', async function() {
     this.manager.filterAll()
   })
 
@@ -38,7 +36,7 @@ describe('Dataset', function() {
 
 describe('Dimension', function() {
 
-  before(function() {
+  beforeEach(function() {
     this.manager = new Manager()
     const name = 'other'
     const data = {
@@ -59,117 +57,115 @@ describe('Dimension', function() {
 
   describe('通常タイプ', function() {
 
-    it.skip('dimensionを作成できる', async function() {
+    it('dimensionを作成できる', async function() {
       const name = 'dim1'
       const dim = this.manager.registerDimension(name, (d) => d.key)
       assert(!!dim)
     })
 
-    it.skip('名前が同じdimensionをregisterすると同じdimensionインスタンスが返る', async function() {
+    it('名前が同じdimensionをregisterすると同じdimensionインスタンスが返る', async function() {
       const name = 'dim1'
       const dim1 = this.manager.registerDimension(name, (d) => d.key)
       const dim2 = this.manager.registerDimension(name, (d) => d.key)
       assert(dim1 === dim2)
     })
 
-    it.skip('dimensionにフィルタを掛けることができる', async function() {
+    it('dimensionにフィルタを掛けることができる', async function() {
       const name = 'dim1'
       const dim = this.manager.registerDimension(name, (d) => d.key)
+      const cf = this.manager.dataset()
 
-      const results1 = dim.group().reduceSum((d) => d.val).all()
-      assert(results1[0] === 3)
+      assert(cf.groupAll().reduceSum((d) => d.val).value() === 3)
 
       dim.filter('a')
 
-      const results2 = dim.group().reduceSum((d) => d.val).all()
-      assert(results2[0] === 1)
+      assert(cf.groupAll().reduceSum((d) => d.val).value() === 1)
     })
 
   })
 
   describe('commonタイプ', function() {
 
-    before(function() {
-      this.manager = new Manager()
-    })
-
-    afterEach(function() {
-      this.manager.filterAll()
-    })
-
-    it.skip('commonDimensionを作成できる', async function() {
+    it('commonDimensionを作成できる', async function() {
       const name = 'dim'
       const dim = this.manager.registerDimension(name, (d) => d.key, {common: true})
       assert(!!dim)
     })
 
-    it.skip('名前が同じdimensionをregisterすると同じdimensionインスタンスが返る', async function() {
+    it('名前が同じdimensionをregisterすると同じdimensionインスタンスが返る', async function() {
       const name = 'dim'
       const dim1 = this.manager.registerDimension(name, (d) => d.key, {common: true})
       const dim2 = this.manager.registerDimension(name, (d) => d.key, {common: true})
       assert(dim1 === dim2)
     })
 
-    it.skip('名前が同じでもcommonの条件で別なdimensionインスタンスが返る', async function() {
+    it('名前が同じでもcommonの条件で別なdimensionインスタンスが返る', async function() {
       const name = 'dim'
       const dim1 = this.manager.registerDimension(name, (d) => d.key, {common: true})
       const dim2 = this.manager.registerDimension(name, (d) => d.key, {common: false})
       assert(dim1 !== dim2)
     })
 
-    it.skip('commonDimensionにフィルタを掛けることができる', async function() {
+    it('commonDimensionにフィルタを掛けることができる', async function() {
       const name = 'dim'
       const dim = this.manager.registerDimension(name, (d) => d.key, {common: true})
+      const cf = this.manager.dataset()
 
-      const results1 = dim.group().reduceSum((d) => d.val).all()
-      assert(results1[0] === 3)
+      const result1 = cf.groupAll().reduceSum((d) => d.val).value()
+      assert(result1 === 3)
 
       dim.filter('a')
 
-      const results2 = dim.group().reduceSum((d) => d.val).all()
-      assert(results2[0] === 1)
+      const result2 = cf.groupAll().reduceSum((d) => d.val).value()
+      assert(result2 === 1)
     })
 
-    it.skip('別のdatasetでもcommonDimensionはfilterが共通化される', async function() {
+    it('別のdatasetでもcommonDimensionはfilterが共通化される', async function() {
       const name = 'commonDim'
       const dim1 = this.manager.registerDimension(name, (d) => d.key, {common: true})
       const dim2 = this.manager.registerDimension(name, (d) => d.key, {dataset: this.otherDataset, common: true})
+      const cf = this.manager.dataset()
+      const cfOther = this.manager.dataset(this.otherDataset)
 
       assert(dim1 !== dim2)
 
-      const results1 = dim1.group().reduceSum((d) => d.val).all()
-      const results2 = dim2.group().reduceSum((d) => d.num).all()
-      assert(results1[0] === 3)
-      assert(results2[0] === 7)
+      const result1 = cf.groupAll().reduceSum((d) => d.val).value()
+      const result2 = cfOther.groupAll().reduceSum((d) => d.num).value()
+
+      assert(result1 === 3)
+      assert(result2 === 7)
 
       dim1.filter('a')
 
       // dim1, dim2に影響している
-      const results3 = dim1.group().reduceSum((d) => d.val).all()
-      const results4 = dim2.group().reduceSum((d) => d.num).all()
-      assert(results3[0] === 1)
-      assert(results4[0] === 3)
+      const result3 = cf.groupAll().reduceSum((d) => d.val).value()
+      const result4 = cfOther.groupAll().reduceSum((d) => d.num).value()
+
+      assert(result3 === 1)
+      assert(result4 === 3)
     })
 
-    it.skip('commonでなく名前が共通の場合、影響しない', async function() {
+    it('commonでなく名前が共通の場合、影響しない', async function() {
       const name = 'commonDim'
       const dim1 = this.manager.registerDimension(name, (d) => d.key, {common: true})
       const dim2 = this.manager.registerDimension(name, (d) => d.key, {dataset: this.otherDataset, common: false})
+      const cf = this.manager.dataset()
+      const cfOther = this.manager.dataset(this.otherDataset)
 
       assert(dim1 !== dim2)
 
-      const results1 = dim1.group().reduceSum((d) => d.val).all()
-      const results2 = dim2.group().reduceSum((d) => d.num).all()
-      assert(results1[0] === 3)
-      assert(results2[0] === 7)
+      const result1 = cf.groupAll().reduceSum((d) => d.val).value()
+      const result2 = cfOther.groupAll().reduceSum((d) => d.num).value()
+      assert(result1 === 3)
+      assert(result2 === 7)
 
       dim1.filter('a')
 
       // dim1, dim2に影響しない
-      const results3 = dim1.group().reduceSum((d) => d.val).all()
-      const results4 = dim2.group().reduceSum((d) => d.num).all()
-      assert(results3[0] === 1)
-      assert(results4[0] === 7)
+      const result3 = cf.groupAll().reduceSum((d) => d.val).value()
+      const result4 = cfOther.groupAll().reduceSum((d) => d.num).value()
+      assert(result3 === 1)
+      assert(result4 === 7)
     })
 
   })
