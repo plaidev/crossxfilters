@@ -116,17 +116,13 @@ export class Manager {
       get (ins, prop) {
         if (prop[0] === '_' && FILTER_METHODS.includes(prop.slice(1))) {
           const _prop = prop.slice(1)
-          return (...args) => {
-            return ins[_prop](...args)
-          }
+          return (...args) => ins[_prop](...args)
         }
         if (FILTER_METHODS.includes(prop)) {
           return (...args) => self.filterCommonDimensions(name, prop, ...args)
         }
         if (ins[prop] instanceof Function || typeof ins[prop] === 'function') {
-          return (...args) => {
-            return ins[prop](...args)
-          }
+          return (...args) => ins[prop](...args)
         }
         return ins[prop]
       }

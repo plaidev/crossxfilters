@@ -79,8 +79,7 @@
     // ブロック開始前のスペースを強制
     "space-before-blocks": 2,
 
-
-    "arrow-body-style": "error",
+    "arrow-body-style": 1,
     "arrow-parens": "error",
     "arrow-spacing": "error",
     "generator-star-spacing": "error",

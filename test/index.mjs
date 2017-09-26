@@ -1,9 +1,7 @@
 import chai from 'chai'
-const {assert} = chai
-
 import {Manager} from '../dist/'
-import crossfilter from 'crossfilter'
 
+const {assert} = chai
 
 describe('Dataset', function() {
 
