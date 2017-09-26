@@ -60,11 +60,11 @@
     }],
 
     // Key:Value におけるコロン前スペースなし、コロン後1スペースを強制
-    // ただし垂直方向にコロン記号を揃えるためのコロン前スペースを認める
     "key-spacing": [2, {
         "beforeColon": false,
-        "afterColon" : true,
-        "align"      : "colon"
+        "afterColon" : true
+        // 垂直方向にコロン記号を揃えるためのコロン前スペースを強制
+        // "align"      : "colon"
     }],
 
     // 連続した空行を注意

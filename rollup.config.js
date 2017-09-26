@@ -21,23 +21,23 @@ export default {
 
     resolve({
       module: true, // Default: true
-      jsnext: true,  // Default: false
-      main: true,  // Default: true
+      jsnext: true, // Default: false
+      main: true // Default: true
     }),
 
     commonjs({
-      include: 'node_modules/**',  // Default: undefined
-      extensions: [ '.mjs', '.js' ],  // Default: [ '.js' ]
+      include: 'node_modules/**', // Default: undefined
+      extensions: [ '.mjs', '.js' ], // Default: [ '.js' ]
     }),
 
     babel({
       babelrc: false,
       presets: [ // stage-3 => es6
-        "stage-3"
+        'stage-3'
       ],
       plugins: [
-        "transform-es2015-destructuring",
-        "external-helpers"
+        'transform-es2015-destructuring',
+        'external-helpers'
       ]
     })
 
