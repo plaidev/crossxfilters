@@ -69,6 +69,6 @@ export default {
   ],
 
   // runtimeがcommonjsやbabelの影響を受けないようにする
-  external: (id) => id.indexOf("babel-runtime") === 0,
+  // external: (id) => id.indexOf("babel-runtime") === 0,
 
 }
