@@ -1,4 +1,4 @@
-import crossfilter from 'crossfilter'
+import crossfilter from 'crossfilter2/crossfilter'
 
 const FILTER_METHODS = [
   'filter',
